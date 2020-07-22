@@ -23,12 +23,6 @@ public class UserValidatorImplTest {
     }
 
     @Test
-    public void validate_userIsRetiredWithoutRetiredReason_retireReasonValueRejected() {
-        val result = validator.validate(validUser());
-        assertThat(result.hasErrors()).isFalse();
-    }
-
-    @Test
     public void validate_isRetiredWithoutRetireReason_retireReasonRejected() {
         val input = validUser();
         input.setRetired(true);
