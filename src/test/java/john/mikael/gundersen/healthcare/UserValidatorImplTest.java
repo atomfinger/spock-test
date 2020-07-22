@@ -46,7 +46,6 @@ public class UserValidatorImplTest {
         val input = validUser();
         input.setPerson(null);
         errorsAssertThat(validator.validate(input))
-                .hasErrorCount(1)
                 .hasCode("person", "error.null");
     }
 
@@ -55,7 +54,6 @@ public class UserValidatorImplTest {
         val input = validUser();
         input.getPerson().setGender(null);
         errorsAssertThat(validator.validate(input))
-                .hasErrorCount(1)
                 .hasCode("person.gender", "error.null");
     }
 
@@ -64,7 +62,6 @@ public class UserValidatorImplTest {
         val input = validUser();
         input.getPerson().setDead(null);
         errorsAssertThat(validator.validate(input))
-                .hasErrorCount(1)
                 .hasCode("person.dead", "error.null");
     }
 
@@ -73,7 +70,6 @@ public class UserValidatorImplTest {
         val input = validUser();
         input.getPerson().setVoided(null);
         errorsAssertThat(validator.validate(input))
-                .hasErrorCount(1)
                 .hasCode("person.voided", "error.null");
     }
 
@@ -82,7 +78,6 @@ public class UserValidatorImplTest {
         val input = validUser();
         input.getPerson().setPersonName(null);
         errorsAssertThat(validator.validate(input))
-                .hasErrorCount(1)
                 .hasCode("person", "Person.names.length");
     }
 
@@ -91,7 +86,6 @@ public class UserValidatorImplTest {
         val input = validUser();
         input.getPerson().setPersonName("");
         errorsAssertThat(validator.validate(input))
-                .hasErrorCount(1)
                 .hasCode("person", "Person.names.length");
     }
 
@@ -107,18 +101,11 @@ public class UserValidatorImplTest {
         val input = validUser();
         input.setUsername(username);
         errorsAssertThat(validator.validate(input))
-                .hasErrorCount(1)
                 .hasCode("username", "error.username.pattern");
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {
-            "",
-            "John",
-            "John-doe",
-            "john_Doe",
-            "John.Doe"
-    })
+    @ValueSource(strings = {"", "John", "John-doe", "john_Doe", "John.Doe"})
     public void validateUsername_usernameIsNotEmailAndUsernameIsValid_noErrors(String username) {
         val input = validUser();
         input.setUsername(username);
@@ -143,7 +130,6 @@ public class UserValidatorImplTest {
         input.setUsername(email);
         when(emailValidator.isValid(email)).thenReturn(false);
         errorsAssertThat(validator.validate(input))
-                .hasErrorCount(1)
                 .hasCode("username", "error.username.email");
     }
 
@@ -154,7 +140,6 @@ public class UserValidatorImplTest {
         input.setEmail(email);
         when(emailValidator.isValid(email)).thenReturn(false);
         errorsAssertThat(validator.validate(input))
-                .hasErrorCount(1)
                 .hasCode("email", "error.email.invalid");
     }
 
