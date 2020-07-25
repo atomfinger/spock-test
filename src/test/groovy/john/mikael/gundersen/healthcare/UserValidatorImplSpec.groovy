@@ -12,8 +12,8 @@ class UserValidatorImplSpec extends Specification {
         validator = new UserValidatorImpl(false, emailValidator)
     }
 
-    def "should not validate(user is retired without no retiredReason"() {
-        when: "user is retired"
+    def "must reject missing retiredReason from a retired user"() {
+        when:
             def errors = validator.validate(user(retired: true))
         then:
             errors.errorCount == 1
