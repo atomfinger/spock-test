@@ -30,49 +30,49 @@ class UserValidatorImplSpec extends Specification {
             errors.errorCount == 3
     }
 
-    def "user must have person object"() {
+    def "a user without person object must be rejected"() {
         when:
             def errors = validator.validate(user([person: null]))
         then:
             errors.getFieldError("person").codes.contains("error.null")
     }
 
-    def "person missing gender field"() {
+    def "a person without the gender field must be rejected"() {
         when:
             def errors = validator.validate(user([gender: null]))
         then:
             errors.getFieldError("person.gender").codes.contains("error.null")
     }
 
-    def "person dead field is null"() {
+    def "person without the dead field must be rejected"() {
         when:
             def errors = validator.validate(user([dead: null]))
         then:
             errors.getFieldError("person.dead").codes.contains("error.null")
     }
 
-    def "person voided status is null"() {
+    def "person without the voided field must be rejected"() {
         when:
             def errors = validator.validate(user([voided: null]))
         then:
             errors.getFieldError("person.voided").codes.contains("error.null")
     }
 
-    def "person name is null"() {
+    def "person without a name must be rejected"() {
         when:
             def errors = validator.validate(user([personName: null]))
         then:
             errors.getFieldError("person").codes.contains("Person.names.length")
     }
 
-    def "person name is blank string"() {
+    def "empty string for username must be rejected"() {
         when:
             def errors = validator.validate(user([personName: ""]))
         then:
             errors.getFieldError("person").codes.contains("Person.names.length")
     }
 
-    def "username is not email and is invalid"(String username) {
+    def "must reject illegal usernames"(String username) {
         when:
             def errors = validator.validate(user([username: username]))
         then:
@@ -85,14 +85,14 @@ class UserValidatorImplSpec extends Specification {
                          "-usernameStartingWithDash"]
     }
 
-    def "verify some valid usernames"(String username) {
+    def "must accept legal usernames"(String username) {
         expect:
             !validator.validate(user([username: username])).hasErrors()
         where:
             username << ["", "John", "John-doe", "john_Doe", "John.Doe"]
     }
 
-    def "username is valid email"() {
+    def "must accept valid usernames"() {
         when:
             validator.emailAsUsername = true
             def email = "john@test.com"
@@ -101,7 +101,7 @@ class UserValidatorImplSpec extends Specification {
             !validator.validate(user([username: email])).hasErrors()
     }
 
-    def "username is invalid email"() {
+    def "must reject username when email is username and the email is invalid"() {
         when:
             validator.emailAsUsername = true
             def email = "this is not an email"
@@ -111,7 +111,7 @@ class UserValidatorImplSpec extends Specification {
             errors.getFieldError("username").codes.contains("error.username.email")
     }
 
-    def "user has invalid email"() {
+    def "must reject email when not null and invalid"() {
         when:
             def email = "this is not an email"
             emailValidator.isValid(email) >> false
@@ -122,7 +122,7 @@ class UserValidatorImplSpec extends Specification {
 
     static User user(Map args = [:]) {
         def map = [retired: false, username: "bob", email: null, person: person(args)] << args
-        return User.builder()
+        User.builder()
                 .retired(map["retired"] as boolean)
                 .username(map["username"] as String)
                 .person(map["person"] as Person)
@@ -132,7 +132,7 @@ class UserValidatorImplSpec extends Specification {
 
     static def person(Map args = [:]) {
         def map = [dead: false, gender: "Male", personName: "John Doe", voided: false] << args
-        return Person.builder()
+        Person.builder()
                 .dead(map["dead"] as Boolean)
                 .gender(map["gender"] as String)
                 .personName(map["personName"] as String)

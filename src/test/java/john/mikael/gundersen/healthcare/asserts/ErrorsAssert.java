@@ -11,7 +11,7 @@ public class ErrorsAssert extends AbstractAssert<ErrorsAssert, Errors> {
         super(actual, ErrorsAssert.class);
     }
 
-    public static ErrorsAssert errorsAssertThat(Errors actual){
+    public static ErrorsAssert errorsAssertThat(Errors actual) {
         return new ErrorsAssert(actual);
     }
 
@@ -20,18 +20,16 @@ public class ErrorsAssert extends AbstractAssert<ErrorsAssert, Errors> {
         return this;
     }
 
-    public ErrorsAssert hasErrorForField(String field) {
-        assertThat(actual.getFieldErrors(field)).isNotEmpty();
-        return this;
-    }
-
     public ErrorsAssert withObjectName(String objectName) {
-        assertThat(actual.getObjectName()).isEqualTo(objectName);
+        assertThat(actual.getObjectName())
+                .isEqualTo(objectName);
         return this;
     }
 
     public ErrorsAssert hasCode(String field, String code) {
-        assertThat(actual.getFieldErrors(field)).flatExtracting("codes").contains(code);
+        assertThat(actual.getFieldErrors(field))
+                .flatExtracting("codes")
+                .contains(code);
         return this;
     }
 }

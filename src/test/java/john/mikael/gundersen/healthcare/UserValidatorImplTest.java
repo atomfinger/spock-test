@@ -50,9 +50,7 @@ public class UserValidatorImplTest {
 
     @Test
     public void validatePerson_personMissingGender_genderRejected() {
-        val input = user().withPerson(
-                person().withGender(null)
-        );
+        val input = user().withPerson(person().withGender(null));
         errorsAssertThat(validator.validate(input))
                 .hasCode("person.gender", "error.null");
     }
@@ -74,8 +72,7 @@ public class UserValidatorImplTest {
 
     @Test
     public void validatePerson_personNameIsNull_nameRejected() {
-        val input = user();
-        input.getPerson().setPersonName(null);
+        val input = user().withPerson(person().withPersonName(null));
         errorsAssertThat(validator.validate(input))
                 .hasCode("person", "Person.names.length");
     }
@@ -121,7 +118,7 @@ public class UserValidatorImplTest {
     public void validateUsername_usernameIsEmailAndEmailIsInvalid_usernameRejected() {
         validator.setEmailAsUsername(true);
         when(emailValidator.isValid("this is not an email")).thenReturn(false);
-        val input = user().withUsername("this is not an email");
+        val input = user().withUsername("this is not an emIail");
         errorsAssertThat(validator.validate(input))
                 .hasCode("username", "error.username.email");
     }
