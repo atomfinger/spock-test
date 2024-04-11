@@ -14,110 +14,108 @@ class UserValidatorImplSpec extends Specification {
 
     def "must reject missing retiredReason from a retired user"() {
         when:
-            def errors = validator.validate(user(retired: true))
+        def errors = validator.validate(user(retired: true))
         then:
-            errors.errorCount == 1
-            errors.objectName == "john.mikael.gundersen.healthcare.User"
-            errors.getFieldError("retireReason").codes.contains("error.null")
+        errors.errorCount == 1
+        errors.objectName == "john.mikael.gundersen.healthcare.User"
+        errors.getFieldError("retireReason").codes.contains("error.null")
     }
 
     def "user has multiple errors"() {
         when:
-            def errors = validator.validate(
-                    user([gender: null, retired: true, username: "username with spaces"])
-            )
+        def errors = validator.validate(user([gender: null, retired: true, username: "username with spaces"]))
         then:
-            errors.errorCount == 3
+        errors.errorCount == 3
     }
 
     def "a user without person object must be rejected"() {
         when:
-            def errors = validator.validate(user([person: null]))
+        def errors = validator.validate(user([person: null]))
         then:
-            errors.getFieldError("person").codes.contains("error.null")
+        errors.getFieldError("person").codes.contains("error.null")
     }
 
     def "a person without the gender field must be rejected"() {
         when:
-            def errors = validator.validate(user([gender: null]))
+        def errors = validator.validate(user([gender: null]))
         then:
-            errors.getFieldError("person.gender").codes.contains("error.null")
+        errors.getFieldError("person.gender").codes.contains("error.null")
     }
 
     def "person without the dead field must be rejected"() {
         when:
-            def errors = validator.validate(user([dead: null]))
+        def errors = validator.validate(user([dead: null]))
         then:
-            errors.getFieldError("person.dead").codes.contains("error.null")
+        errors.getFieldError("person.dead").codes.contains("error.null")
     }
 
     def "person without the voided field must be rejected"() {
         when:
-            def errors = validator.validate(user([voided: null]))
+        def errors = validator.validate(user([voided: null]))
         then:
-            errors.getFieldError("person.voided").codes.contains("error.null")
+        errors.getFieldError("person.voided").codes.contains("error.null")
     }
 
     def "person without a name must be rejected"() {
         when:
-            def errors = validator.validate(user([personName: null]))
+        def errors = validator.validate(user([personName: null]))
         then:
-            errors.getFieldError("person").codes.contains("Person.names.length")
+        errors.getFieldError("person").codes.contains("Person.names.length")
     }
 
     def "empty string for username must be rejected"() {
         when:
-            def errors = validator.validate(user([personName: ""]))
+        def errors = validator.validate(user([personName: ""]))
         then:
-            errors.getFieldError("person").codes.contains("Person.names.length")
+        errors.getFieldError("person").codes.contains("Person.names.length")
     }
 
     def "must reject illegal usernames"(String username) {
         when:
-            def errors = validator.validate(user([username: username]))
+        def errors = validator.validate(user([username: username]))
         then:
-            errors.getFieldError("username").codes.contains("error.username.pattern")
+        errors.getFieldError("username").codes.contains("error.username.pattern")
         where:
-            username << [")SpecialSymbol",
-                         "anotherSpecialSymbol#",
-                         "username with spaces",
-                         "ThisIsASuperLongUsernameWhoWouldEvenHaveSuchAUsername",
-                         "-usernameStartingWithDash"]
+        username << [")SpecialSymbol",
+                     "anotherSpecialSymbol#",
+                     "username with spaces",
+                     "ThisIsASuperLongUsernameWhoWouldEvenHaveSuchAUsername",
+                     "-usernameStartingWithDash"]
     }
 
     def "must accept legal usernames"(String username) {
         expect:
-            !validator.validate(user([username: username])).hasErrors()
+        !validator.validate(user([username: username])).hasErrors()
         where:
-            username << ["", "John", "John-doe", "john_Doe", "John.Doe"]
+        username << ["", "John", "John-doe", "john_Doe", "John.Doe"]
     }
 
     def "must accept valid usernames"() {
         when:
-            validator.emailAsUsername = true
-            def email = "john@test.com"
-            emailValidator.isValid(email) >> true
+        validator.emailAsUsername = true
+        def email = "john@test.com"
+        emailValidator.isValid(email) >> true
         then:
-            !validator.validate(user([username: email])).hasErrors()
+        !validator.validate(user([username: email])).hasErrors()
     }
 
     def "must reject username when email is username and the email is invalid"() {
         when:
-            validator.emailAsUsername = true
-            def email = "this is not an email"
-            emailValidator.isValid(email) >> false
-            def errors = validator.validate(user([username: email]))
+        validator.emailAsUsername = true
+        def email = "this is not an email"
+        emailValidator.isValid(email) >> false
+        def errors = validator.validate(user([username: email]))
         then:
-            errors.getFieldError("username").codes.contains("error.username.email")
+        errors.getFieldError("username").codes.contains("error.username.email")
     }
 
     def "must reject email when not null and invalid"() {
         when:
-            def email = "this is not an email"
-            emailValidator.isValid(email) >> false
-            def errors = validator.validate(user([email: email]))
+        def email = "this is not an email"
+        emailValidator.isValid(email) >> false
+        def errors = validator.validate(user([email: email]))
         then:
-            errors.getFieldError("email").codes.contains("error.email.invalid")
+        errors.getFieldError("email").codes.contains("error.email.invalid")
     }
 
     static User user(Map args = [:]) {
